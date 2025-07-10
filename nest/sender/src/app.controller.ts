@@ -13,6 +13,6 @@ export class AppController {
       surname: 'Nagiyev',
     };
 
-    return await this.appService.sendMessage(data)
+    return await this.appService.sendMessage(data);
   }
 }

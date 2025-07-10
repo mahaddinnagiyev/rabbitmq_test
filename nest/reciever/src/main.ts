@@ -3,38 +3,20 @@ import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  // const app = await NestFactory.createMicroservice<MicroserviceOptions>(
-  //   AppModule,
-  //   {
-  //     transport: Transport.RMQ,
-  //     options: {
-  //       urls: ['amqp://localhost:5672'],
-  //       queue: 'nest_queue',
-  //     },
-  //   },
-  // );
-
-  // app.listen();
-
-  const app = await NestFactory.create(AppModule);
-
-  app.connectMicroservice({
-    transport: Transport.RMQ,
-    options: {
-      urls: ['amqp://localhost'],
-      queue: 'nest_queue',
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AppModule,
+    {
+      transport: Transport.RMQ,
+      options: {
+        urls: ['amqp://localhost:5672'],
+        queue: 'nest_queue_1',
+        exchange: 'direct_ex',
+        exchangeType: 'direct',
+        routingKey: 'nest_routing_key_1',
+      },
     },
-  });
+  );
 
-  app.connectMicroservice({
-    transport: Transport.RMQ,
-    options: {
-      urls: ['amqp://localhost'],
-      queue: 'nest_queue_1',
-    },
-  });
-
-  await app.listen(3001);
-  await app.startAllMicroservices();
+  app.listen();
 }
 bootstrap();

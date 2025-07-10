@@ -3,7 +3,7 @@ import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class AppService {
-  constructor(@Inject('NEST_SERVICE') private rabbitClient: ClientProxy) {}
+  constructor(@Inject('NEST_SERVICE_1') private rabbitClient: ClientProxy) {}
 
   async sendMessage(data: { id: number; name: string; surname: string }) {
     this.rabbitClient.emit('data-send', data);
