@@ -15,6 +15,19 @@ async function bootstrap() {
     },
   );
 
+  const rmqApp = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AppModule,
+    {
+      transport: Transport.RMQ,
+      options: {
+        urls: ['amqp://guest:guest@rabbitmq:5672'],
+        queue: 'get_product_queue',
+        exchangeType: 'direct',
+        routingKey: 'get_product_key',
+      },
+    },
+  );
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -24,5 +37,6 @@ async function bootstrap() {
   );
 
   await app.listen();
+  await rmqApp.listen();
 }
 bootstrap();

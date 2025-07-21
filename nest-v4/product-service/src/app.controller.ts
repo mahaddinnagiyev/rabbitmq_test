@@ -40,4 +40,9 @@ export class AppController {
   async removeProduct(@Payload() data: { id: string; userId: string }) {
     return await this.appService.removeProduct(data.id, data.userId);
   }
+
+  @MessagePattern({ cmd: 'get_user_product' })
+  async getUserProduct(@Payload() userId: string) {
+    return await this.appService.getUserProducts(userId);
+  }
 }

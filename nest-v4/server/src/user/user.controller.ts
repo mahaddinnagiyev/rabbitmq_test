@@ -13,7 +13,13 @@ export class UserController {
   }
 
   @Get('/get')
-  async getUser(@Query('username') username: string) {
+  async getUser(
+    @Query('username') username: string,
+    @Query('products') products?: boolean,
+  ) {
+    if (products) {
+      return await this.userService.getUserWithProducts(username);
+    }
     return await this.userService.getUser(username);
   }
 

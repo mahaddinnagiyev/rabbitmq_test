@@ -22,4 +22,9 @@ export class AppController {
   async login(@Payload() loginDto: LoginDTO) {
     return await this.appService.login(loginDto);
   }
+
+  @MessagePattern({ cmd: 'getUserWithProducts' })
+  async getUserWithProductsHandler(@Payload() username: string) {
+    return await this.appService.getUserWithProducts(username);
+  }
 }

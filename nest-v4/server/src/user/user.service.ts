@@ -32,6 +32,15 @@ export class UserService {
     return response;
   }
 
+  async getUserWithProducts(username: string) {
+    const response = this.userService.send(
+      { cmd: 'getUserWithProducts' },
+      username,
+    );
+
+    return response;
+  }
+
   async login(data: LoginDTO) {
     const response = this.userService.send({ cmd: 'login' }, data);
 

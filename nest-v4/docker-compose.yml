@@ -1,4 +1,24 @@
 services:
+  postgres:
+    image: postgres:15
+    ports:
+      - 5432:5432
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: nagiyev05
+      POSTGRES_DB: product_service
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
   server:
     build:
       context: ./server
@@ -17,6 +37,8 @@ services:
     ports:
       - 3001:3001
     restart: always
+    depends_on:
+      - rabbitmq
 
   product-service:
     build:
@@ -27,13 +49,4 @@ services:
     restart: always
     depends_on:
       - postgres
-
-  postgres:
-    image: postgres:15
-    ports:
-      - 5432:5432
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: nagiyev05
-      POSTGRES_DB: product_service
+      - rabbitmq

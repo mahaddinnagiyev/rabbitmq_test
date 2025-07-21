@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { CreateUserDTO } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
@@ -6,10 +6,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.schema';
 import { Model } from 'mongoose';
 import { LoginDTO } from './dto/login.dto';
+import { ClientProxy } from '@nestjs/microservices';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class AppService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    @Inject('RABBITMQ_PRODUCT') private readonly rabbitmqProduct: ClientProxy,
+  ) {}
 
   async newUser(data: CreateUserDTO) {
     const { username, email, password } = data;
@@ -43,6 +48,24 @@ export class AppService {
     if (!user) return null;
 
     return user;
+  }
+
+  async getUserWithProducts(username: string) {
+    const user = await this.getUserByUsername(username);
+
+    if (!user) return { error: 'User not found' };
+
+    const response = await lastValueFrom(
+      this.rabbitmqProduct.send({ cmd: 'get_user_product' }, user._id),
+    );
+
+    console.log('response: ', response);
+    console.log('response.toPromise: ', response);
+
+    return {
+      user,
+      products: response,
+    };
   }
 
   async login(data: LoginDTO) {
